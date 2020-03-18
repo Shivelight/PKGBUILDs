@@ -1,0 +1,48 @@
+# Maintainer: Shivelight <cwkfr@protonmail.com>
+
+_pkgname=bootstrap-studio
+
+pkgname="${_pkgname}"-appimage
+pkgver=5.0.3
+pkgrel=1
+pkgdesc="A powerful desktop app for creating responsive websites using the Bootstrap framework."
+arch=('x86_64')
+url="https://bootstrapstudio.io/"
+options=(!strip)
+_appimage="${pkgname}-${pkgver}.AppImage"
+source=("${_appimage}::https://bootstrapstudio.io/releases/desktop/5.0.3/Bootstrap%20Studio.AppImage")
+noextract=("${_appimage}")
+sha256sums=('e970a3d7cb68ccc24c682b5e60f40ee0feaec6faa72fc79d5359c895b50a87ad')
+
+prepare() {
+    chmod +x "${_appimage}"
+    ./"${_appimage}" --appimage-extract
+}
+
+build() {
+    # Adjust .desktop so it will work outside of AppImage container
+    sed -i -E "s|Exec=AppRun|Exec=/usr/bin/${_pkgname} %F|" \
+        "squashfs-root/bstudio.desktop"
+
+    # Fix permissions; .AppImage permissions are 700 for all directories
+    chmod -R a-x+rX squashfs-root/usr
+}
+
+package() {
+    # AppImage
+    install -Dm755 "${srcdir}/${_appimage}" "${pkgdir}/opt/${pkgname}/${_pkgname}.AppImage"
+
+    # Desktop file
+    install -Dm644 "${srcdir}/squashfs-root/bstudio.desktop" \
+            "${pkgdir}/usr/share/applications/${_pkgname}.desktop"
+
+    # Icon images
+    install -dm755 "${pkgdir}/usr/share/icons/hicolor/512x512/apps/"
+    install -Dm644 "${srcdir}/squashfs-root/usr/share/icons/hicolor/0x0/apps/bstudio.png" \
+        "${pkgdir}/usr/share/icons/hicolor/512x512/apps/bstudio.png"
+
+    # Symlink executable
+    install -dm755 "${pkgdir}/usr/bin"
+    ln -s "/opt/${pkgname}/${_pkgname}.AppImage" "${pkgdir}/usr/bin/${_pkgname}"
+
+}
