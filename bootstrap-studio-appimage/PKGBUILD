@@ -3,16 +3,16 @@
 _pkgname=bootstrap-studio
 
 pkgname="${_pkgname}"-appimage
-pkgver=5.0.3
+pkgver=5.4.1
 pkgrel=1
 pkgdesc="A powerful desktop app for creating responsive websites using the Bootstrap framework."
 arch=('x86_64')
 url="https://bootstrapstudio.io/"
 options=(!strip)
 _appimage="${pkgname}-${pkgver}.AppImage"
-source=("${_appimage}::https://bootstrapstudio.io/releases/desktop/5.0.3/Bootstrap%20Studio.AppImage")
+source=("${_appimage}::https://bootstrapstudio.io/releases/desktop/${pkgver}/Bootstrap%20Studio.AppImage")
 noextract=("${_appimage}")
-sha256sums=('e970a3d7cb68ccc24c682b5e60f40ee0feaec6faa72fc79d5359c895b50a87ad')
+sha256sums=('43d04e8fdb125f0da151646c84ce04bdf24f01692659a9b81267e28d8f3ee420')
 
 prepare() {
     chmod +x "${_appimage}"
